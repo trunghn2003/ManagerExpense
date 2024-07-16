@@ -2,7 +2,11 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\IncomeCategoryController;
+use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\ExpenseCategoryController;
+use App\Http\Controllers\ExpenseController;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -19,6 +23,13 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-Auth::routes();
+
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::resource('users', UserController::class);
+Route::resource('income-categories', IncomeCategoryController::class);
+Route::resource('incomes', IncomeController::class);
+Route::resource('expense-categories', ExpenseCategoryController::class);
+Route::resource('expenses', ExpenseController::class);
+

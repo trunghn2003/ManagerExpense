@@ -17,6 +17,10 @@
             <label for="amount">Amount</label>
             <input type="number" step="0.01" class="form-control" id="amount" name="amount" required>
         </div>
+        <div class="form-group">
+            <label for="date">Date</label>
+            <input type="date" class="form-control" id="date" name="date" required>
+        </div>
         <button type="submit" class="btn btn-primary">Save</button>
     </form>
 </div>

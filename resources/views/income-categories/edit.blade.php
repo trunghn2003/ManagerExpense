@@ -12,11 +12,8 @@
         </div>
         <div class="form-group">
             <label for="user_id">User</label>
-            <select class="form-control" id="user_id" name="user_id" required>
-                @foreach($users as $user)
-                    <option value="{{ $user->id }}" {{ $user->id == $incomeCategory->user_id ? 'selected' : '' }}>{{ $user->name }}</option>
-                @endforeach
-            </select>
+            <input type="text" class="form-control" id="user_id" name="user_id" value="{{ Auth::user()->id }}" required readonly>
+                
         </div>
         <button type="submit" class="btn btn-primary">Update</button>
     </form>

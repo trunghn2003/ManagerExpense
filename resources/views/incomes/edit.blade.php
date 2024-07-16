@@ -10,7 +10,7 @@
             <label for="income_category_id">Category</label>
             <select class="form-control" id="income_category_id" name="income_category_id" required>
                 @foreach($incomeCategories as $category)
-                    <option value="{{ $category->id }}" {{ $income->income_category_id == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                    <option value="{{ $category->id }}" {{ $category->id == $income->income_category_id ? 'selected' : '' }}>{{ $category->name }}</option>
                 @endforeach
             </select>
         </div>
@@ -18,4 +18,11 @@
             <label for="amount">Amount</label>
             <input type="number" step="0.01" class="form-control" id="amount" name="amount" value="{{ $income->amount }}" required>
         </div>
-        <button type="submit" class="btn btn
+        <div class="form-group">
+            <label for="date">Date</label>
+            <input type="date" class="form-control" id="date" name="date" value="{{ $income->date }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+@endsection

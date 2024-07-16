@@ -10,6 +10,7 @@
                 <th>ID</th>
                 <th>Category</th>
                 <th>Amount</th>
+                <th>Date</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -19,6 +20,7 @@
                     <td>{{ $income->id }}</td>
                     <td>{{ $income->incomeCategory->name }}</td>
                     <td>{{ $income->amount }}</td>
+                    <td>{{ $income->date }}</td>
                     <td>
                         <a href="{{ route('incomes.edit', $income->id) }}" class="btn btn-warning">Edit</a>
                         <form action="{{ route('incomes.destroy', $income->id) }}" method="POST" style="display:inline-block;">

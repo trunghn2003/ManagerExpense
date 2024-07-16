@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class IncomeCategory extends Model
 {
     use HasFactory;
-    protected $fillable = ['name'];
+    protected $fillable = ['user_id', 'name'];
 
     public function incomes()
     {
@@ -20,3 +20,5 @@ class IncomeCategory extends Model
         return $this->belongsTo(User::class);
     }
 }
+
+

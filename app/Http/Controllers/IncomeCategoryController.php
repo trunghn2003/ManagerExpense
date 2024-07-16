@@ -4,12 +4,17 @@ namespace App\Http\Controllers;
 use App\Models\IncomeCategory;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class IncomeCategoryController extends Controller
 {
     public function index()
     {
-        $incomeCategories = IncomeCategory::all();
+        $userId = Auth::id();
+        
+        // Lấy các income categories của người dùng hiện tại
+        $incomeCategories = IncomeCategory::where('user_id', $userId)->get();
+        // $incomeCategories = IncomeCategory::all();
         return view('income-categories.index', compact('incomeCategories'));
     }
 

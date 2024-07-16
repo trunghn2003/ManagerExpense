@@ -10,7 +10,7 @@ class IncomeController extends Controller
 {
     public function index()
     {
-        $incomes = Income::with('incomeCategory')->get();
+        $incomes = Income::all();
         return view('incomes.index', compact('incomes'));
     }
 
@@ -25,6 +25,7 @@ class IncomeController extends Controller
         $request->validate([
             'income_category_id' => 'required|exists:income_categories,id',
             'amount' => 'required|numeric',
+            'date' => 'required|date',
         ]);
 
         Income::create($request->all());
@@ -43,6 +44,7 @@ class IncomeController extends Controller
         $request->validate([
             'income_category_id' => 'required|exists:income_categories,id',
             'amount' => 'required|numeric',
+            'date' => 'required|date',
         ]);
 
         $income->update($request->all());

@@ -8,6 +8,8 @@ use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\StatisticsController;
+use App\Http\Controllers\ReportController;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -27,5 +29,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('expense-categories', ExpenseCategoryController::class);
     Route::resource('expenses', ExpenseController::class);
     Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics.index');
+    Route::resource('reports', ReportController::class)->middleware('auth');
 });
 require __DIR__.'/auth.php';

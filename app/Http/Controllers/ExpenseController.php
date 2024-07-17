@@ -9,15 +9,45 @@ use Illuminate\Support\Facades\Auth;
 
 class ExpenseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Retrieve expense categories that belong to the logged-in user
-        $expenseCategories = ExpenseCategory::where('user_id', Auth::id())->pluck('id');
+        $query = Expense::whereHas('expenseCategory', function ($query) {
+            $query->where('user_id', Auth::id());
+        });
 
-        // Retrieve expenses that belong to those categories
-        $expenses = Expense::whereIn('expense_category_id', $expenseCategories)->paginate(10);
+        if ($request->filled('keyword')) {
+            $query->where(function($q) use ($request) {
+                $q->where('description', 'like', '%' . $request->keyword . '%')
+                  ->orWhereHas('expenseCategory', function ($q) use ($request) {
+                      $q->where('name', 'like', '%' . $request->keyword . '%');
+                  });
+            });
+        }
 
-        return view('expenses.index', compact('expenses'));
+        if ($request->filled('category')) {
+            $query->where('expense_category_id', $request->category);
+        }
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('date', '>=', $request->start_date);
+        }
+
+        if ($request->filled('end_date')) {
+            $query->whereDate('date', '<=', $request->end_date);
+        }
+
+        if ($request->filled('min_amount')) {
+            $query->where('amount', '>=', $request->min_amount);
+        }
+
+        if ($request->filled('max_amount')) {
+            $query->where('amount', '<=', $request->max_amount);
+        }
+
+        $expenses = $query->paginate(10);
+        $expenseCategories = ExpenseCategory::where('user_id', Auth::id())->get();
+
+        return view('expenses.index', compact('expenses', 'expenseCategories'));
     }
 
     public function create()

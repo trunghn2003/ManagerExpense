@@ -1,24 +1,24 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container mt-5">
     <h1>Create Income</h1>
     <form action="{{ route('incomes.store') }}" method="POST">
         @csrf
-        <div class="form-group">
-            <label for="income_category_id">Category</label>
-            <select class="form-control" id="income_category_id" name="income_category_id" required>
+        <div class="mb-3">
+            <label for="income_category_id" class="form-label">Category</label>
+            <select class="form-select" id="income_category_id" name="income_category_id" required>
                 @foreach($incomeCategories as $category)
                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                 @endforeach
             </select>
         </div>
-        <div class="form-group">
-            <label for="amount">Amount</label>
+        <div class="mb-3">
+            <label for="amount" class="form-label">Amount</label>
             <input type="number" step="0.01" class="form-control" id="amount" name="amount" required>
         </div>
-        <div class="form-group">
-            <label for="date">Date</label>
+        <div class="mb-3">
+            <label for="date" class="form-label">Date</label>
             <input type="date" class="form-control" id="date" name="date" required>
         </div>
         <button type="submit" class="btn btn-primary">Save</button>

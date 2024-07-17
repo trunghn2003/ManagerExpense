@@ -11,7 +11,7 @@
             <input type="text" class="form-control" id="name" name="name" value="{{ $incomeCategory->name }}" required>
         </div>
         <div class="form-group">
-            <label for="user_id">User</label>
+            {{-- <label for="user_id">User</label> --}}
             <input type="hidden" name="user_id" value="{{ Auth::id() }}">
             
                 

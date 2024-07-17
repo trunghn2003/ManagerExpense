@@ -7,6 +7,7 @@ use App\Http\Controllers\IncomeCategoryController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\StatisticsController;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -32,4 +33,5 @@ Route::resource('income-categories', IncomeCategoryController::class);
 Route::resource('incomes', IncomeController::class);
 Route::resource('expense-categories', ExpenseCategoryController::class);
 Route::resource('expenses', ExpenseController::class);
+Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics.index');
 

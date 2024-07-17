@@ -37,6 +37,7 @@ class IncomeController extends Controller
         $incomeCategory->incomes()->create([
             'amount' => $request->amount,
             'date' => $request->date,
+            'description' => $request->description,
         ]);
 
         return redirect()->route('incomes.index')->with('success', 'Income created successfully.');
@@ -64,6 +65,7 @@ class IncomeController extends Controller
             'income_category_id' => $request->income_category_id,
             'amount' => $request->amount,
             'date' => $request->date,
+            'description' => $request->description,
         ]);
 
         return redirect()->route('incomes.index')->with('success', 'Income updated successfully.');

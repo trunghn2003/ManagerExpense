@@ -9,7 +9,7 @@ class Income extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['income_category_id', 'amount', 'date'];
+    protected $fillable = ['income_category_id', 'amount', 'date', 'description'];
 
     public function incomeCategory()
     {

@@ -24,6 +24,10 @@
             <label for="date">Date</label>
             <input type="date" class="form-control" id="date" name="date" value="{{ $expense->date }}" required>
         </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3">{{ $expense->description }}</textarea>
+        </div>
         <button type="submit" class="btn btn-primary">Update</button>
     </form>
 </div>

@@ -21,6 +21,10 @@
             <label for="date" class="form-label">Date</label>
             <input type="date" class="form-control" id="date" name="date" required>
         </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+        </div>
         <button type="submit" class="btn btn-primary">Save</button>
     </form>
 </div>

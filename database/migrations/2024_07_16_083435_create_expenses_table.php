@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('expense_category_id')->constrained()->onDelete('cascade');
             $table->decimal('amount', 10, 2);
             $table->date('date');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

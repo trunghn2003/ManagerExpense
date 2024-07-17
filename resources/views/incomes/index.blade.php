@@ -14,6 +14,7 @@
                     <th scope="col">Category</th>
                     <th scope="col">Amount</th>
                     <th scope="col">Date</th>
+                    <th scope="col">Description</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
@@ -24,6 +25,7 @@
                         <td>{{ $income->incomeCategory->name }}</td>
                         <td>{{ $income->amount }}</td>
                         <td>{{ $income->date }}</td>
+                        <td>{{ $income->description }}</td>
                         <td>
                             <a href="{{ route('incomes.edit', $income->id) }}" class="btn btn-warning btn-sm">Edit</a>
                             <form action="{{ route('incomes.destroy', $income->id) }}" method="POST" class="d-inline-block">

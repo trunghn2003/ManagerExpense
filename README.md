@@ -1,8 +1,8 @@
 # Tên dự án: Quản lý thu chi
 
-##Usecase
+## Usecase
 
 ![CHEESE!](usecase.jpg)
 
-##Database
+## Database
 ![CHEESE!](EntityRelationshipDiagram.jpg)

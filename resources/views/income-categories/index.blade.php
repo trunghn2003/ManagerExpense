@@ -29,5 +29,7 @@
             @endforeach
         </tbody>
     </table>
+    {{  $incomeCategories->links() }}
+
 </div>
 @endsection

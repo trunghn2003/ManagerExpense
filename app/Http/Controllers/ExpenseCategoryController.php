@@ -9,7 +9,7 @@ class ExpenseCategoryController extends Controller
 {
     public function index()
     {
-        $expenseCategories = ExpenseCategory::where('user_id', Auth::id())->get();
+        $expenseCategories = ExpenseCategory::where('user_id', Auth::id())->paginate(10);
         return view('expense-categories.index', compact('expenseCategories'));
     }
 

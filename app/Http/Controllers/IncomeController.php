@@ -12,7 +12,7 @@ class IncomeController extends Controller
     public function index()
     {
         $incomeCategories = IncomeCategory::where('user_id', Auth::id())->pluck('id');
-        $incomes = Income::whereIn('income_category_id', $incomeCategories)->get();
+        $incomes = Income::whereIn('income_category_id', $incomeCategories)->paginate(10);
         return view('incomes.index', compact('incomes'));
     }
 

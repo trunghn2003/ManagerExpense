@@ -31,5 +31,6 @@
             @endforeach
         </tbody>
     </table>
+    {{ $expenseCategories->links() }}
 </div>
 @endsection

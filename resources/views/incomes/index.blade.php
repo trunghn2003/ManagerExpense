@@ -37,5 +37,6 @@
             </tbody>
         </table>
     </div>
+    {{ $incomes->links() }}
 </div>
 @endsection

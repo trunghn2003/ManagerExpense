@@ -15,7 +15,7 @@ class ExpenseController extends Controller
         $expenseCategories = ExpenseCategory::where('user_id', Auth::id())->pluck('id');
 
         // Retrieve expenses that belong to those categories
-        $expenses = Expense::whereIn('expense_category_id', $expenseCategories)->get();
+        $expenses = Expense::whereIn('expense_category_id', $expenseCategories)->paginate(10);
 
         return view('expenses.index', compact('expenses'));
     }

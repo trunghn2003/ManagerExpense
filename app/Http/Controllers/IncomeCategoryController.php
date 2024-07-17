@@ -13,7 +13,7 @@ class IncomeCategoryController extends Controller
         $userId = Auth::id();
         
         // Lấy các income categories của người dùng hiện tại
-        $incomeCategories = IncomeCategory::where('user_id', $userId)->get();
+        $incomeCategories = IncomeCategory::where('user_id', $userId)->paginate(10);
         // $incomeCategories = IncomeCategory::all();
         return view('income-categories.index', compact('incomeCategories'));
     }

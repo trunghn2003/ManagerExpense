@@ -10,8 +10,8 @@
             <input type="text" class="form-control" id="name" name="name" required>
         </div>
         <div class="form-group">
-            <label for="user_id">User</label>
-            <input type="text" class="form-control" id="user_id" name="user_id" value="{{ Auth::user()->id }}" required readonly>
+            {{-- <label for="user_id">User</label> --}}
+            <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ Auth::user()->id }}" required readonly>
         </div>
         <button type="submit" class="btn btn-primary">Save</button>
     </form>

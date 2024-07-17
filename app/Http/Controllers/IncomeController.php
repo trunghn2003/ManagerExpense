@@ -5,18 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\Income;
 use App\Models\IncomeCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class IncomeController extends Controller
 {
     public function index()
     {
-        $incomes = Income::all();
+        $incomeCategories = IncomeCategory::where('user_id', Auth::id())->pluck('id');
+        $incomes = Income::whereIn('income_category_id', $incomeCategories)->get();
         return view('incomes.index', compact('incomes'));
     }
 
     public function create()
     {
-        $incomeCategories = IncomeCategory::all();
+        $incomeCategories = IncomeCategory::where('user_id', Auth::id())->get();
         return view('incomes.create', compact('incomeCategories'));
     }
 
@@ -28,14 +30,21 @@ class IncomeController extends Controller
             'date' => 'required|date',
         ]);
 
-        Income::create($request->all());
+        $incomeCategory = IncomeCategory::where('id', $request->income_category_id)
+                                        ->where('user_id', Auth::id())
+                                        ->firstOrFail();
+
+        $incomeCategory->incomes()->create([
+            'amount' => $request->amount,
+            'date' => $request->date,
+        ]);
 
         return redirect()->route('incomes.index')->with('success', 'Income created successfully.');
     }
 
     public function edit(Income $income)
     {
-        $incomeCategories = IncomeCategory::all();
+        $incomeCategories = IncomeCategory::where('user_id', Auth::id())->get();
         return view('incomes.edit', compact('income', 'incomeCategories'));
     }
 
@@ -47,7 +56,15 @@ class IncomeController extends Controller
             'date' => 'required|date',
         ]);
 
-        $income->update($request->all());
+        $incomeCategory = IncomeCategory::where('id', $request->income_category_id)
+                                        ->where('user_id', Auth::id())
+                                        ->firstOrFail();
+
+        $income->update([
+            'income_category_id' => $request->income_category_id,
+            'amount' => $request->amount,
+            'date' => $request->date,
+        ]);
 
         return redirect()->route('incomes.index')->with('success', 'Income updated successfully.');
     }

@@ -10,7 +10,6 @@
                 <th>ID</th>
                 <th>Amount</th>
                 <th>Category</th>
-                {{-- <th>User</th> --}}
                 <th>Date</th>
                 <th>Actions</th>
             </tr>
@@ -21,7 +20,6 @@
                     <td>{{ $expense->id }}</td>
                     <td>{{ $expense->amount }}</td>
                     <td>{{ $expense->expenseCategory->name }}</td>
-                    {{-- <td>{{ $expense->user->name }}</td> --}}
                     <td>{{ $expense->date }}</td>
                     <td>
                         <a href="{{ route('expenses.edit', $expense->id) }}" class="btn btn-warning">Edit</a>

@@ -10,14 +10,7 @@
             <label for="name">Name</label>
             <input type="text" class="form-control" id="name" name="name" value="{{ $expenseCategory->name }}" required>
         </div>
-        <div class="form-group">
-            <label for="user_id">User</label>
-            <select class="form-control" id="user_id" name="user_id" required>
-                @foreach($users as $user)
-                    <option value="{{ $user->id }}" {{ $user->id == $expenseCategory->user_id ? 'selected' : '' }}>{{ $user->name }}</option>
-                @endforeach
-            </select>
-        </div>
+        <input type="hidden" name="user_id" value="{{ Auth::id() }}">
         <button type="submit" class="btn btn-primary">Update</button>
     </form>
 </div>

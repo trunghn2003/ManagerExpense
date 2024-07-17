@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 use App\Models\ExpenseCategory;
 use App\Models\User;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 class ExpenseCategoryController extends Controller
 {
     public function index()
     {
-        $expenseCategories = ExpenseCategory::all();
+        $expenseCategories = ExpenseCategory::where('user_id', Auth::id())->get();
         return view('expense-categories.index', compact('expenseCategories'));
     }
 

@@ -12,7 +12,8 @@
         </div>
         <div class="form-group">
             <label for="user_id">User</label>
-            <input type="text" class="form-control" id="user_id" name="user_id" value="{{ Auth::user()->id }}" required readonly>
+            <input type="hidden" name="user_id" value="{{ Auth::id() }}">
+            
                 
         </div>
         <button type="submit" class="btn btn-primary">Update</button>

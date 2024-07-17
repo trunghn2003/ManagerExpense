@@ -11,11 +11,14 @@
         </div>
         <div class="form-group">
             <label for="user_id">User</label>
-            <select class="form-control" id="user_id" name="user_id" required>
+            <select class="form-control" id="user_id" name="user_id" disabled>
                 @foreach($users as $user)
-                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    <option value="{{ $user->id }}" {{ $user->id == Auth::id() ? 'selected' : '' }}>
+                        {{ $user->name }}
+                    </option>
                 @endforeach
             </select>
+            <input type="hidden" name="user_id" value="{{ Auth::id() }}">
         </div>
         <button type="submit" class="btn btn-primary">Save</button>
     </form>

@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 use App\Services\Expenses\ExpenseServiceInterface;  
+use App\Services\expenseCategories\ExpenseCategoryServiceInterface;
 use App\Models\ExpenseCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -8,18 +9,22 @@ use Illuminate\Support\Facades\Auth;
 class ExpenseController extends Controller
 {
     protected $expenseService;
+    protected $expenseCategoryService;
 
-    public function __construct(ExpenseServiceInterface $expenseService)
+    public function __construct(ExpenseServiceInterface $expenseService,
+                                ExpenseCategoryServiceInterface $expenseCategoryService)
     {
         $this->expenseService = $expenseService;
+        $this->expenseCategoryService = $expenseCategoryService;
     }
+   
 
     public function index(Request $request)
     {
         $filters = $request->only(['keyword', 'category', 'start_date', 'end_date', 'min_amount', 'max_amount']);
         $userId = Auth::id();
         $expenses = $this->expenseService->getAllExpenses($userId, $filters);
-        $expenseCategories = ExpenseCategory::where('user_id', $userId)->get();
+        $expenseCategories = $this->expenseCategoryService->getAllExpenseCategories($userId);
 
         return view('expenses.index', compact('expenses', 'expenseCategories'));
     }
@@ -38,7 +43,7 @@ class ExpenseController extends Controller
             'date' => 'required|date',
         ]);
 
-        $expenseCategory = ExpenseCategory::find($request->expense_category_id);
+        $expenseCategory = $this->expenseCategoryService->getExpenseCategoryById($request->expense_category_id);
         if ($expenseCategory->user_id != Auth::id()) {
             return redirect()->route('expenses.index')->with('error', 'Unauthorized access.');
         }
@@ -67,7 +72,7 @@ class ExpenseController extends Controller
             'date' => 'required|date',
         ]);
 
-        $expenseCategory = ExpenseCategory::find($request->expense_category_id);
+        $expenseCategory = $this->expenseCategoryService->getExpenseCategoryById($request->expense_category_id);
         if ($expenseCategory->user_id != Auth::id()) {
             return redirect()->route('expenses.index')->with('error', 'Unauthorized access.');
         }

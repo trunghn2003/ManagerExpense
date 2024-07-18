@@ -9,4 +9,6 @@ interface IncomeCategoryRepositoryInterface
     public function update($id, array $data);
     public function delete($id);
     public function getByIds($ids);
+    public function getByUserId($userId);
+
 }

@@ -73,4 +73,10 @@ class ExpenseRepository implements ExpenseRepositoryInterface
         }
         return false;
     }
+    public function getByCategoryIdsAndDateRange(array $categoryIds, $startDate, $endDate)
+    {
+        return Expense::whereIn('expense_category_id', $categoryIds)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->get();
+    }
 }

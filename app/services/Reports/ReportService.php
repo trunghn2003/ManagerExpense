@@ -1,34 +1,43 @@
 <?php
+
 namespace App\Services\reports;
 
 use App\Repositories\reports\ReportRepositoryInterface;
+use App\Repositories\expenseCategories\ExpenseCategoryRepositoryInterface;
+use App\Repositories\IncomeCategories\IncomeCategoryRepositoryInterface;
+use App\Repositories\Expenses\ExpenseRepositoryInterface;
+use App\Repositories\Incomes\IncomeRepositoryInterface;
 use Carbon\Carbon;
-use App\Models\Expense;
-use App\Models\Income;
-use App\Models\ExpenseCategory;
-use App\Models\IncomeCategory;
 
 class ReportService implements ReportServiceInterface
 {
     protected $reportRepository;
+    protected $expenseCategoryRepository;
+    protected $incomeCategoryRepository;
+    protected $expenseRepository;
+    protected $incomeRepository;
 
-    public function __construct(ReportRepositoryInterface $reportRepository)
-    {
+    public function __construct(
+        ReportRepositoryInterface $reportRepository,
+        ExpenseCategoryRepositoryInterface $expenseCategoryRepository,
+        IncomeCategoryRepositoryInterface $incomeCategoryRepository,
+        ExpenseRepositoryInterface $expenseRepository,
+        IncomeRepositoryInterface $incomeRepository
+    ) {
         $this->reportRepository = $reportRepository;
+        $this->expenseCategoryRepository = $expenseCategoryRepository;
+        $this->incomeCategoryRepository = $incomeCategoryRepository;
+        $this->expenseRepository = $expenseRepository;
+        $this->incomeRepository = $incomeRepository;
     }
 
     public function generateReportContent($startDate, $endDate, $userId)
     {
-        $expenseCategoryIds = ExpenseCategory::where('user_id', $userId)->pluck('id');
-        $incomeCategoryIds = IncomeCategory::where('user_id', $userId)->pluck('id');
+        $expenseCategoryIds = $this->expenseCategoryRepository->getByUserId($userId)->toArray();
+        $incomeCategoryIds = $this->incomeCategoryRepository->getByUserId($userId)->toArray();
 
-        $expenses = Expense::whereIn('expense_category_id', $expenseCategoryIds)
-                            ->whereBetween('date', [$startDate, $endDate])
-                            ->get();
-
-        $incomes = Income::whereIn('income_category_id', $incomeCategoryIds)
-                          ->whereBetween('date', [$startDate, $endDate])
-                          ->get();
+        $expenses = $this->expenseRepository->getByCategoryIdsAndDateRange($expenseCategoryIds, $startDate, $endDate);
+        $incomes = $this->incomeRepository->getByCategoryIdsAndDateRange($incomeCategoryIds, $startDate, $endDate);
 
         $totalExpenses = $expenses->sum('amount');
         $totalIncomes = $incomes->sum('amount');
@@ -41,8 +50,8 @@ class ReportService implements ReportServiceInterface
             return $row->sum('amount');
         });
 
-        $expenseCategoryNames = ExpenseCategory::whereIn('id', $expensesByCategory->keys())->pluck('name', 'id');
-        $incomeCategoryNames = IncomeCategory::whereIn('id', $incomesByCategory->keys())->pluck('name', 'id');
+        $expenseCategoryNames = $this->expenseCategoryRepository->getByIds($expensesByCategory->keys()->toArray());
+        $incomeCategoryNames = $this->incomeCategoryRepository->getByIds($incomesByCategory->keys()->toArray());
 
         return view('reports.template', compact(
             'totalExpenses',
@@ -52,8 +61,8 @@ class ReportService implements ReportServiceInterface
             'expenseCategoryNames',
             'incomeCategoryNames',
             'startDate',
-            'endDate'
-            ,'userId'
+            'endDate',
+            'userId'
         ))->render();
     }
 

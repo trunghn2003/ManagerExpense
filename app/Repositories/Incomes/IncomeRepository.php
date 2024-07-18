@@ -74,4 +74,11 @@ class IncomeRepository implements IncomeRepositoryInterface
         }
         return false;
     }
+    
+    public function getByCategoryIdsAndDateRange(array $categoryIds, $startDate, $endDate)
+    {
+        return Income::whereIn('income_category_id', $categoryIds)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->get();
+    }
 }

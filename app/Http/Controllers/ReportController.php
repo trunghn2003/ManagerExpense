@@ -87,6 +87,37 @@ class ReportController extends Controller
         return redirect()->route('reports.index')->with('success', 'Report created successfully.');
     }
 
+    public function edit(Report $report)
+    {
+        if ($report->user_id != Auth::id()) {
+            return redirect()->route('reports.index')->with('error', 'Unauthorized access.');
+        }
+
+        return view('reports.edit', compact('report'));
+    }
+
+    public function update(Request $request, Report $report)
+    {
+        if ($report->user_id != Auth::id()) {
+            return redirect()->route('reports.index')->with('error', 'Unauthorized access.');
+        }
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'is_public' => 'boolean',
+        ]);
+
+        $isPublic = $request->has('is_public') ? (bool)$request->is_public : false;
+
+        $report->update([
+            'title' => $request->title,
+            'is_public' => $isPublic,
+        ]);
+
+        return redirect()->route('reports.index')->with('success', 'Report updated successfully.');
+    }
+
+
     public function show(Report $report)
     {
         if (!$report->is_public && $report->user_id != Auth::id()) {

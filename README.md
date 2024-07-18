@@ -2,7 +2,7 @@
 
 ## Usecase
 
-![CHEESE!](usecase1.jpg.jpg)
+![CHEESE!](usecase1.jpg)
 
 ## Database
 ![CHEESE!](EntityRelationshipDiagram.jpg)

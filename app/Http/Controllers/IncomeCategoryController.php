@@ -1,20 +1,25 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Models\IncomeCategory;
+use App\Services\IncomeCategories\IncomeCategoryServiceInterface;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class IncomeCategoryController extends Controller
 {
+    protected $incomeCategoryService;
+
+    public function __construct(IncomeCategoryServiceInterface $incomeCategoryService)
+    {
+        $this->incomeCategoryService = $incomeCategoryService;
+    }
+
     public function index()
     {
         $userId = Auth::id();
-        
-        // Lấy các income categories của người dùng hiện tại
-        $incomeCategories = IncomeCategory::where('user_id', $userId)->paginate(10);
-        // $incomeCategories = IncomeCategory::all();
+        $incomeCategories = $this->incomeCategoryService->getAllIncomeCategories($userId);
         return view('income-categories.index', compact('incomeCategories'));
     }
 
@@ -31,32 +36,33 @@ class IncomeCategoryController extends Controller
             'user_id' => 'required|exists:users,id',
         ]);
 
-        IncomeCategory::create($request->all());
+        $this->incomeCategoryService->createIncomeCategory($request->all());
 
         return redirect()->route('income-categories.index')->with('success', 'Income category created successfully.');
     }
 
-    public function edit(IncomeCategory $incomeCategory)
+    public function edit($id)
     {
+        $incomeCategory = $this->incomeCategoryService->getIncomeCategoryById($id);
         $users = User::all();
         return view('income-categories.edit', compact('incomeCategory', 'users'));
     }
 
-    public function update(Request $request, IncomeCategory $incomeCategory)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'name' => 'required',
             'user_id' => 'required|exists:users,id',
         ]);
 
-        $incomeCategory->update($request->all());
+        $this->incomeCategoryService->updateIncomeCategory($id, $request->all());
 
         return redirect()->route('income-categories.index')->with('success', 'Income category updated successfully.');
     }
 
-    public function destroy(IncomeCategory $incomeCategory)
+    public function destroy($id)
     {
-        $incomeCategory->delete();
+        $this->incomeCategoryService->deleteIncomeCategory($id);
         return redirect()->route('income-categories.index')->with('success', 'Income category deleted successfully.');
     }
 }

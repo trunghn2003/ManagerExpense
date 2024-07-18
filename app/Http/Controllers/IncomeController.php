@@ -2,50 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Income;
+use App\Services\Incomes\IncomeServiceInterface;
 use App\Models\IncomeCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class IncomeController extends Controller
 {
+    protected $incomeService;
+
+    public function __construct(IncomeServiceInterface $incomeService)
+    {
+        $this->incomeService = $incomeService;
+    }
+
     public function index(Request $request)
     {
-        $query = Income::whereHas('incomeCategory', function ($query) {
-            $query->where('user_id', Auth::id());
-        });
-
-        if ($request->filled('keyword')) {
-            $query->where(function($q) use ($request) {
-                $q->where('description', 'like', '%' . $request->keyword . '%')
-                  ->orWhereHas('incomeCategory', function ($q) use ($request) {
-                      $q->where('name', 'like', '%' . $request->keyword . '%');
-                  });
-            });
-        }
-
-        if ($request->filled('category')) {
-            $query->where('income_category_id', $request->category);
-        }
-
-        if ($request->filled('start_date')) {
-            $query->whereDate('date', '>=', $request->start_date);
-        }
-
-        if ($request->filled('end_date')) {
-            $query->whereDate('date', '<=', $request->end_date);
-        }
-
-        if ($request->filled('min_amount')) {
-            $query->where('amount', '>=', $request->min_amount);
-        }
-
-        if ($request->filled('max_amount')) {
-            $query->where('amount', '<=', $request->max_amount);
-        }
-
-        $incomes = $query->paginate(10);
-        $incomeCategories = IncomeCategory::where('user_id', Auth::id())->get();
+        $filters = $request->only(['keyword', 'category', 'start_date', 'end_date', 'min_amount', 'max_amount']);
+        $userId = Auth::id();
+        $incomes = $this->incomeService->getAllIncomes($userId, $filters);
+        $incomeCategories = IncomeCategory::where('user_id', $userId)->get();
 
         return view('incomes.index', compact('incomes', 'incomeCategories'));
     }
@@ -68,7 +44,8 @@ class IncomeController extends Controller
                                         ->where('user_id', Auth::id())
                                         ->firstOrFail();
 
-        $incomeCategory->incomes()->create([
+        $this->incomeService->createIncome([
+            'income_category_id' => $request->income_category_id,
             'amount' => $request->amount,
             'date' => $request->date,
             'description' => $request->description,
@@ -77,13 +54,18 @@ class IncomeController extends Controller
         return redirect()->route('incomes.index')->with('success', 'Income created successfully.');
     }
 
-    public function edit(Income $income)
+    public function edit($id)
     {
+        $income = $this->incomeService->getIncomeById($id);
+        if ($income->incomeCategory->user_id != Auth::id()) {
+            return redirect()->route('incomes.index')->with('error', 'Unauthorized access.');
+        }
+
         $incomeCategories = IncomeCategory::where('user_id', Auth::id())->get();
         return view('incomes.edit', compact('income', 'incomeCategories'));
     }
 
-    public function update(Request $request, Income $income)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'income_category_id' => 'required|exists:income_categories,id',
@@ -95,7 +77,7 @@ class IncomeController extends Controller
                                         ->where('user_id', Auth::id())
                                         ->firstOrFail();
 
-        $income->update([
+        $this->incomeService->updateIncome($id, [
             'income_category_id' => $request->income_category_id,
             'amount' => $request->amount,
             'date' => $request->date,
@@ -105,9 +87,14 @@ class IncomeController extends Controller
         return redirect()->route('incomes.index')->with('success', 'Income updated successfully.');
     }
 
-    public function destroy(Income $income)
+    public function destroy($id)
     {
-        $income->delete();
+        $income = $this->incomeService->getIncomeById($id);
+        if ($income->incomeCategory->user_id != Auth::id()) {
+            return redirect()->route('incomes.index')->with('error', 'Unauthorized access.');
+        }
+
+        $this->incomeService->deleteIncome($id);
         return redirect()->route('incomes.index')->with('success', 'Income deleted successfully.');
     }
 }

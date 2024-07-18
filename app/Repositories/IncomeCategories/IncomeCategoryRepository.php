@@ -39,4 +39,9 @@ class IncomeCategoryRepository implements IncomeCategoryRepositoryInterface
         }
         return false;
     }
+    public function getByIds($ids)
+    {
+        return IncomeCategory::whereIn('id', $ids)->pluck('name', 'id');
+    }
+    
 }

@@ -39,4 +39,8 @@ class ExpenseCategoryRepository implements ExpenseCategoryRepositoryInterface
         }
         return false;
     }
+    public function getByIds(array $ids)
+    {
+        return ExpenseCategory::whereIn('id', $ids)->pluck('name', 'id');
+    }
 }

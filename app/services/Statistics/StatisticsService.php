@@ -2,16 +2,27 @@
 namespace App\Services\Statistics;
 
 use App\Repositories\Statistics\StatisticsRepositoryInterface;
+use App\Repositories\expenseCategories\ExpenseCategoryRepositoryInterface;
+use App\Repositories\IncomeCategories\IncomeCategoryRepositoryInterface;
 use App\Models\ExpenseCategory;
+use App\Models\Income;
 use App\Models\IncomeCategory;
+use Illuminate\Validation\Rules\In;
 
 class StatisticsService implements StatisticsServiceInterface
 {
     protected $statisticsRepository;
+    protected $expenseCategoryRepository;
+    protected $incomeCategoryRepository;
 
-    public function __construct(StatisticsRepositoryInterface $statisticsRepository)
+    public function __construct(StatisticsRepositoryInterface $statisticsRepository,
+                                ExpenseCategoryRepositoryInterface $expenseCategoryRepository,
+                                IncomeCategoryRepositoryInterface $incomeCategoryRepository
+    )
     {
         $this->statisticsRepository = $statisticsRepository;
+        $this->expenseCategoryRepository = $expenseCategoryRepository;
+        $this->incomeCategoryRepository = $incomeCategoryRepository;
     }
 
     public function getStatistics($userId, $startDate, $endDate)
@@ -29,9 +40,8 @@ class StatisticsService implements StatisticsServiceInterface
         $incomesByCategory = $incomes->groupBy('income_category_id')->map(function ($row) {
             return $row->sum('amount');
         });
-
-        $expenseCategoryNames = ExpenseCategory::whereIn('id', $expensesByCategory->keys())->pluck('name', 'id');
-        $incomeCategoryNames = IncomeCategory::whereIn('id', $incomesByCategory->keys())->pluck('name', 'id');
+        $expenseCategoryNames = $this->expenseCategoryRepository->getByIds($expensesByCategory->keys()->toArray());
+        $incomeCategoryNames = $this->incomeCategoryRepository->getByIds($incomesByCategory->keys()->toArray());
 
         return compact('totalExpenses', 'totalIncomes', 'expensesByCategory', 'incomesByCategory', 'expenseCategoryNames', 'incomeCategoryNames');
     }

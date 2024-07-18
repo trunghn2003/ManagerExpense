@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\Incomes\IncomeServiceInterface;
+use App\Services\IncomeCategories\IncomeCategoryServiceInterface;
 use App\Models\IncomeCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,10 +11,13 @@ use Illuminate\Support\Facades\Auth;
 class IncomeController extends Controller
 {
     protected $incomeService;
+    protected $incomeCategoryService;
 
-    public function __construct(IncomeServiceInterface $incomeService)
+    public function __construct(IncomeServiceInterface $incomeService,
+                                IncomeCategoryServiceInterface $incomeCategoryService   )
     {
         $this->incomeService = $incomeService;
+        $this->incomeCategoryService = $incomeCategoryService;
     }
 
     public function index(Request $request)
@@ -21,14 +25,16 @@ class IncomeController extends Controller
         $filters = $request->only(['keyword', 'category', 'start_date', 'end_date', 'min_amount', 'max_amount']);
         $userId = Auth::id();
         $incomes = $this->incomeService->getAllIncomes($userId, $filters);
-        $incomeCategories = IncomeCategory::where('user_id', $userId)->get();
+        $incomeCategories = $this->incomeCategoryService->getAllIncomeCategories($userId);
+        // $incomeCategories = IncomeCategory::where('user_id', $userId)->get();
 
         return view('incomes.index', compact('incomes', 'incomeCategories'));
     }
 
     public function create()
     {
-        $incomeCategories = IncomeCategory::where('user_id', Auth::id())->get();
+        // $incomeCategories = IncomeCategory::where('user_id', Auth::id())->get();
+        $incomeCategories = $this->incomeCategoryService->getAllIncomeCategories(Auth::id());
         return view('incomes.create', compact('incomeCategories'));
     }
 
@@ -39,10 +45,6 @@ class IncomeController extends Controller
             'amount' => 'required|numeric',
             'date' => 'required|date',
         ]);
-
-        $incomeCategory = IncomeCategory::where('id', $request->income_category_id)
-                                        ->where('user_id', Auth::id())
-                                        ->firstOrFail();
 
         $this->incomeService->createIncome([
             'income_category_id' => $request->income_category_id,
@@ -73,10 +75,7 @@ class IncomeController extends Controller
             'date' => 'required|date',
         ]);
 
-        $incomeCategory = IncomeCategory::where('id', $request->income_category_id)
-                                        ->where('user_id', Auth::id())
-                                        ->firstOrFail();
-
+       
         $this->incomeService->updateIncome($id, [
             'income_category_id' => $request->income_category_id,
             'amount' => $request->amount,

@@ -99,4 +99,16 @@ class ReportController extends Controller
 
         return redirect()->route('reports.index')->with('success', 'Report updated successfully.');
     }
+
+    public function destroy($id)
+    {
+        $report = $this->reportService->getReportById($id);
+        if ($report->user_id != Auth::id()) {
+            return redirect()->route('reports.index')->with('error', 'Unauthorized access.');
+        }
+
+        $this->reportService->deleteReport($id);
+
+        return redirect()->route('reports.index')->with('success', 'Report deleted successfully.');
+    }
 }

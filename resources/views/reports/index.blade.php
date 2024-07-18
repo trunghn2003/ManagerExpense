@@ -28,6 +28,11 @@
                             <a href="{{ route('reports.show', $report->id) }}" class="btn btn-primary btn-sm">View</a>
                             @if ($report->user_id == Auth::id())
                                 <a href="{{ route('reports.edit', $report->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                <form action="{{ route('reports.destroy', $report->id) }}" method="POST" class="d-inline-block">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
                             @endif
                         </td>
                     </tr>
